@@ -1,7 +1,0 @@
-{
-  "name": "TRMNL Webhook",
-  "render_readme": true,
-  "domains": ["trmnl_webhook"],
-  "iot_class": "Cloud Push",
-  "homeassistant": "2026.1.0"
-}
