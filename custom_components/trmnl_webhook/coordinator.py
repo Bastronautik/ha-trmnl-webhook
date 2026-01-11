@@ -66,6 +66,9 @@ class TRMNLCoordinator(DataUpdateCoordinator):
                 entity_id = entity["entity_id"]
                 domain = entity_id.split(".")[0]
                 
+                # Get the state object for attributes
+                state = self.hass.states.get(entity_id)
+                
                 # Create entity object
                 entity_obj = {
                     "entity_id": entity_id.replace(".", "_"),
@@ -73,6 +76,14 @@ class TRMNLCoordinator(DataUpdateCoordinator):
                     "current": str(entity["state"]),
                     "last_changed": entity["last_changed"],
                 }
+                
+                # Add icon if available
+                if state and state.attributes.get("icon"):
+                    entity_obj["icon"] = state.attributes.get("icon")
+                
+                # Add device_class if available
+                if state and state.attributes.get("device_class"):
+                    entity_obj["device_class"] = state.attributes.get("device_class")
                 
                 # Add unit if available
                 if entity.get("unit"):
