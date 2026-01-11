@@ -2,12 +2,13 @@
     "domain": "trmnl_webhook",
     "name": "TRMNL Webhook",
     "codeowners": [
-        "@bas"
+        "@Bastronautik"
     ],
     "config_flow": true,
-    "documentation": "https://github.com/yourusername/trmnl",
+    "documentation": "https://github.com/Bastronautik/ha-trmnl-webhook",
     "integration_type": "service",
     "iot_class": "cloud_push",
+    "issue_tracker": "https://github.com/Bastronautik/ha-trmnl-webhook/issues",
     "requirements": [],
     "version": "1.0.0"
 }
