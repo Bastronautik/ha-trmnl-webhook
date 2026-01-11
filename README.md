@@ -1,65 +1,74 @@
 # Home Assistant TRMNL Integration
 
-Een custom integratie voor Home Assistant waarmee je sensor entities naar TRMNL webhooks kunt sturen, inclusief historische data.
+A custom Home Assistant integration to send entity data to your [TRMNL](https://usetrmnl.com/) e-ink display via webhooks, including historical statistics and recent data points.
 
-## Features
+## ✨ Features
 
-- 🔗 **Meerdere webhooks**: Configureer meerdere onafhankelijke TRMNL webhooks
-- 📊 **Historische data**: Automatisch de laatste 24 uur aan data meesturen voor entities met history
-- ⚙️ **Instelbaar interval**: Update interval van 5 minuten tot 24 uur
-- 🎨 **UI configuratie**: Alles instelbaar via de Home Assistant UI
-- 🔄 **Automatische updates**: Periodieke updates op basis van ingesteld interval
-- 🛠️ **Service calls**: Handmatig updates versturen via service calls
-- ⚠️ **Error handling**: Robuuste error handling met retry logic en notificaties
+- 🔗 **Multiple webhooks**: Configure multiple independent TRMNL webhooks
+- 📊 **Historical statistics**: Automatically calculate 24-hour average, min, max for numeric entities
+- 📈 **Recent data points**: Optionally send 0-25 recent data points for trend visualization
+- 🎯 **All entity types**: Support for sensors, lights, switches, device trackers, and more
+- ⚙️ **Configurable interval**: Update interval from 5 minutes to 24 hours
+- 🎨 **UI configuration**: Everything configurable via Home Assistant UI
+- 🔄 **Automatic updates**: Periodic updates based on configured interval
+- 🛠️ **Manual updates**: Trigger updates via service calls or automations
 
-## Installatie
+## 📦 Installation
 
-### HACS (Aanbevolen)
+### HACS (Recommended)
 
 1. Open HACS in Home Assistant
-2. Ga naar "Integrations"
-3. Klik op de drie puntjes rechtsboven en selecteer "Custom repositories"
-4. Voeg deze repository toe als "Integration"
-5. Zoek naar "TRMNL" en installeer
-6. Herstart Home Assistant
+2. Click on "Integrations"
+3. Click the three dots in the top right and select "Custom repositories"
+4. Add this repository URL: `https://github.com/Bastronautik/ha-trmnl-webhook`
+5. Select "Integration" as the category
+6. Click "Add"
+7. Search for "TRMNL Webhook" and click "Download"
+8. Restart Home Assistant
 
-### Handmatige installatie
+### Manual Installation
 
-1. Kopieer de `custom_components/trmnl_webhook` folder naar je Home Assistant `config/custom_components/` directory
-2. Herstart Home Assistant
+1. Download the latest release from the releases page
+2. Extract the `custom_components/trmnl_webhook folder` to your Home Assistant `config/custom_components/` directory
+3. Restart Home Assistant
 
-## Configuratie
+## Configuration
 
 ### Via UI
 
-1. Ga naar **Instellingen** → **Apparaten & Services**
-2. Klik op **+ Integratie toevoegen**
-3. Zoek naar **TRMNL**
-4. Voer je TRMNL Webhook ID in (te vinden in je TRMNL plugin instellingen)
-5. Selecteer de sensor entities die je wilt versturen
-6. Stel het update interval in (standaard 60 minuten)
-7. Klik op **Verzenden**
+1. Go to Settings → Devices & Services
+2. Click + Add Integration
+3. Search for TRMNL Webhook
+4. Enter your TRMNL Webhook ID (found in your TRMNL plugin settings at usetrmnl.com)
+5. Give your webhook a friendly name (optional)
+6. Select the entities you want to send
+7. Set the update interval (default: 60 minutes)
+8. Set history data points (0-25, default: 0)
+   - Only statistics (avg/min/max/current state)
+   - 1-25: Include recent data points for trends
+9. Click Submit
 
-### Meerdere webhooks toevoegen
+### Adding Multiple Webhooks
 
-Herhaal bovenstaande stappen om meerdere TRMNL webhooks te configureren. Elke webhook kan zijn eigen entities en update interval hebben.
+Repeat the setup steps to configure multiple TRMNL webhooks. Each webhook can have its own entities, update interval, and history settings.
 
-### Configuratie aanpassen
+### Modifying Configuration
 
-1. Ga naar **Instellingen** → **Apparaten & Services**
-2. Zoek de TRMNL integratie
-3. Klik op **Configureren**
-4. Pas de entities en/of update interval aan
+1. Go to Settings → Devices & Services
+2. Find your TRMNL Webhook integration
+3. Click Configure
+4. Adjust entities, update interval, or history points
+6. Click Submit
 
-## Gebruik
+## Usage
 
-### Automatische updates
+### Automatic Updates
 
-De integratie verstuurt automatisch updates naar je TRMNL webhook(s) op basis van het ingestelde interval.
+The integration automatically sends updates to your TRMNL webhook(s) based on the configured interval.
 
-### Handmatige updates
+### Manual Updates
 
-Je kunt ook handmatig een update versturen via een service call:
+Trigger a manual update via service call:
 
 ```yaml
 service: trmnl_webhook.send_update
@@ -67,16 +76,11 @@ data:
   config_entry_id: "abc123def456"
 ```
 
-Om de `config_entry_id` te vinden:
-1. Ga naar **Ontwikkelaarshulpmiddelen** → **Services**
-2. Selecteer de `trmnl_webhook.send_update` service
-3. De beschikbare config entry IDs worden getoond
-
 ### In automations
 
 ```yaml
 automation:
-  - alias: "Verstuur TRMNL update bij temperatuurverandering"
+  - alias: "Update TRMNL on temperature change"
     trigger:
       - platform: state
         entity_id: sensor.temperature_living_room
@@ -86,62 +90,101 @@ automation:
           config_entry_id: "abc123def456"
 ```
 
-## Data formaat
+## Data Format
 
-De integratie verstuurt de volgende JSON structuur naar je TRMNL webhook:
+The integration sends data in the following nested JSON format:
+
+### Basic
 
 ```json
 {
   "merge_variables": {
-    "timestamp": "2026-01-11T14:52:39+01:00",
-    "entities": [
-      {
-        "entity_id": "sensor.temperature_living_room",
-        "name": "Living Room Temperature",
-        "state": "21.5",
-        "unit": "°C",
-        "attributes": {
-          "device_class": "temperature",
-          "friendly_name": "Living Room Temperature"
-        },
-        "history": [
-          {"timestamp": "2026-01-10T14:52:39+01:00", "value": 20.8},
-          {"timestamp": "2026-01-10T15:52:39+01:00", "value": 21.0}
-        ]
-      }
-    ]
+    "last_update": "2026-01-11 15:30:00",
+    "sensor_living_room_temperature": {
+      "name": "Living Room Temperature",
+      "current": "21.5",
+      "unit": "°C",
+      "last_changed": "2026-01-11 15:25:00",
+      "24h_avg": "20.83",
+      "24h_min": "18.50",
+      "24h_max": "23.20"
+    },
+    "light_living_room": {
+      "name": "Living Room Light",
+      "current": "on",
+      "last_changed": "2026-01-11 14:20:00"
+    }
   }
 }
 ```
 
-### Historische data
+### With Historic Data Points
 
-Voor entities met history (opgeslagen in de recorder) wordt automatisch de data van de afgelopen 24 uur meegestuurd in het `history` veld. Dit is een array van objecten met `timestamp` en `value`.
+```json
+{
+  "merge_variables": {
+    "sensor_temperature": {
+      "name": "Temperature",
+      "current": "21.5",
+      "unit": "°C",
+      "last_changed": "2026-01-11 15:30:00",
+      "24h_avg": "20.83",
+      "24h_min": "18.50",
+      "24h_max": "23.20",
+      "recent_data": [
+        {"time": "13:30", "value": "20.10"},
+        {"time": "14:00", "value": "20.50"},
+        {"time": "14:30", "value": "21.00"},
+        {"time": "15:00", "value": "21.30"},
+        {"time": "15:30", "value": "21.50"}
+      ]
+    }
+  }
+}
+```
 
-Entities zonder history of zonder numerieke waarden krijgen geen `history` veld.
+### Entity Types
+
+Numeric entities (sensors with numeric values):
+- `current`: Current state
+- `unit`: Unit of measurement
+- `last_changed`: Last state change timestamp
+- `24h_avg`, `24h_min`, `24h_max`: 24-hour statistics
+- `recent_data`: Optional recent data points (if configured)
+
+Non-numeric entities (lights, switches, device trackers, etc.):
+- `current:` Current state ("on", "off", "home", etc.)
+- `last_changed`: Last state change timestamp
 
 ## Troubleshooting
 
-### Webhook validatie mislukt
+### Webhook Validation Failed
 
-- Controleer of je TRMNL Webhook ID correct is
-- Zorg dat je TRMNL account actief is
-- Test de webhook handmatig via de TRMNL website
+- ✅ Verify your TRMNL Webhook ID is correct
+- ✅ Check that your TRMNL account is active
+- ✅ Test the webhook manually via the TRMNL website
 
-### Geen data ontvangen
+### No Data Received
 
-- Controleer de logs in Home Assistant (**Instellingen** → **Systeem** → **Logs**)
-- Verifieer dat de geselecteerde entities bestaan en data hebben
-- Test met een handmatige update via de service call
+- 📋 Check the logs: **Settings → System → Logs**
+- 🔍 Verify the selected entities exist and have data
+- 🧪 Test with a manual update via service call
 
-### Error notificaties
+### Error: "Payload too large"
+- Reduce the number of entities
+- Set `history_points` to `0` or a lower value
+- TRMNL has a 2KB payload limit
 
-De integratie toont notificaties in Home Assistant wanneer er problemen zijn met het versturen van data. Controleer deze notificaties voor meer details.
+### Integration Not Showing
+- Clear browser cache (Ctrl+Shift+R / Cmd+Shift+R)
+- Restart Home Assistant completely
+- Check `custom_components/trmnl_webhook/` folder exists
 
-## Ondersteuning
+### Contributing
 
-Voor vragen, bugs of feature requests, open een issue op GitHub.
+Contributions are welcome! Please:
 
-## Licentie
-
-MIT License
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
