@@ -58,19 +58,17 @@ class TRMNLCoordinator(DataUpdateCoordinator):
             # Collect entity data
             entity_data = await self._collect_entity_data()
             
-            # Create nested structure per entity
-            merge_variables = {
-                "last_update": dt_util.now().strftime("%Y-%m-%d %H:%M:%S"),
-            }
+            # Group entities by domain
+            grouped_entities = {}
             
-            # Add each entity as a nested object
+            # Add each entity to appropriate group
             for entity in entity_data:
                 entity_id = entity["entity_id"]
-                # Create safe key names (replace . with _)
-                safe_key = entity_id.replace(".", "_")
+                domain = entity_id.split(".")[0]
                 
                 # Create entity object
                 entity_obj = {
+                    "entity_id": entity_id.replace(".", "_"),
                     "name": entity["name"],
                     "current": str(entity["state"]),
                     "last_changed": entity["last_changed"],
@@ -92,7 +90,6 @@ class TRMNLCoordinator(DataUpdateCoordinator):
                         
                         # Add recent data points if requested
                         if self.history_points > 0:
-                            # Take last N points (ensure we don't exceed available data)
                             num_points = min(self.history_points, len(history_data))
                             recent_points = history_data[-num_points:]
                             entity_obj["recent_data"] = [
@@ -103,8 +100,19 @@ class TRMNLCoordinator(DataUpdateCoordinator):
                                 for point in recent_points
                             ]
                 
-                # Add entity object to merge_variables
-                merge_variables[safe_key] = entity_obj
+                # Auto-group by domain (pluralized)
+                group_name = f"{domain}s" if not domain.endswith("s") else domain
+                
+                if group_name not in grouped_entities:
+                    grouped_entities[group_name] = []
+                
+                grouped_entities[group_name].append(entity_obj)
+            
+            # Build merge_variables
+            merge_variables = {
+                "last_update": dt_util.now().strftime("%Y-%m-%d %H:%M:%S"),
+                **grouped_entities
+            }
             
             # Prepare payload
             payload = {
