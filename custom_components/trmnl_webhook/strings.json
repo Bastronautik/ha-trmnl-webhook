@@ -1,0 +1,62 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "TRMNL Webhook",
+                "description": "Configure a TRMNL webhook to send sensor data to your TRMNL device.",
+                "data": {
+                    "webhook_id": "TRMNL Webhook ID",
+                    "name": "Name (optional)",
+                    "entities": "Entities to send",
+                    "update_interval": "Update interval",
+                    "history_points": "History data points"
+                },
+                "data_description": {
+                    "webhook_id": "Your TRMNL webhook ID (found in your TRMNL plugin settings)",
+                    "name": "Give this webhook a friendly name",
+                    "entities": "Select the entities you want to send to TRMNL",
+                    "update_interval": "How often to send updates (in minutes)",
+                    "history_points": "Number of recent data points to send (0-25, uses more bandwidth)"
+                }
+            }
+        },
+        "error": {
+            "cannot_connect": "Failed to connect to TRMNL webhook. Please check your webhook ID."
+        },
+        "abort": {
+            "already_configured": "This TRMNL webhook is already configured."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "TRMNL Options",
+                "description": "Update your TRMNL webhook configuration.",
+                "data": {
+                    "name": "Name",
+                    "entities": "Entities to send",
+                    "update_interval": "Update interval",
+                    "history_points": "History data points"
+                },
+                "data_description": {
+                    "name": "Give this webhook a friendly name",
+                    "entities": "Select the entities you want to send to TRMNL",
+                    "update_interval": "How often to send updates (in minutes)",
+                    "history_points": "Number of recent data points to send (0-25)"
+                }
+            }
+        }
+    },
+    "services": {
+        "send_update": {
+            "name": "Send update",
+            "description": "Manually send an update to a TRMNL webhook.",
+            "fields": {
+                "config_entry_id": {
+                    "name": "Config entry ID",
+                    "description": "The ID of the TRMNL webhook configuration to update."
+                }
+            }
+        }
+    }
+}

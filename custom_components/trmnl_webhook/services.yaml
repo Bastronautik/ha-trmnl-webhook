@@ -1,0 +1,11 @@
+send_update:
+  name: Send update
+  description: Manually send an update to a TRMNL webhook.
+  fields:
+    config_entry_id:
+      name: Config entry ID
+      description: The ID of the TRMNL webhook configuration to update.
+      required: true
+      example: "abc123def456"
+      selector:
+        text:

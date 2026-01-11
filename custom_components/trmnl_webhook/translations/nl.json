@@ -1,0 +1,62 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "TRMNL Webhook",
+                "description": "Configureer een TRMNL webhook om gegevens naar je TRMNL apparaat te sturen.",
+                "data": {
+                    "webhook_id": "TRMNL Webhook ID",
+                    "name": "Naam (optioneel)",
+                    "entities": "Entities om te versturen",
+                    "update_interval": "Update interval",
+                    "history_points": "Geschiedenis datapunten"
+                },
+                "data_description": {
+                    "webhook_id": "Je TRMNL webhook ID (te vinden in je TRMNL plugin instellingen)",
+                    "name": "Geef deze webhook een herkenbare naam",
+                    "entities": "Selecteer de entities die je naar TRMNL wilt sturen",
+                    "update_interval": "Hoe vaak updates versturen (in minuten)",
+                    "history_points": "Aantal recente datapunten om te versturen (0-25, gebruikt meer bandbreedte)"
+                }
+            }
+        },
+        "error": {
+            "cannot_connect": "Kan geen verbinding maken met TRMNL webhook. Controleer je webhook ID."
+        },
+        "abort": {
+            "already_configured": "Deze TRMNL webhook is al geconfigureerd."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "TRMNL Opties",
+                "description": "Wijzig je TRMNL webhook configuratie.",
+                "data": {
+                    "name": "Naam",
+                    "entities": "Entities om te versturen",
+                    "update_interval": "Update interval",
+                    "history_points": "Geschiedenis datapunten"
+                },
+                "data_description": {
+                    "name": "Geef deze webhook een herkenbare naam",
+                    "entities": "Selecteer de entities die je naar TRMNL wilt sturen",
+                    "update_interval": "Hoe vaak updates versturen (in minuten)",
+                    "history_points": "Aantal recente datapunten om te versturen (0-25)"
+                }
+            }
+        }
+    },
+    "services": {
+        "send_update": {
+            "name": "Verstuur update",
+            "description": "Verstuur handmatig een update naar een TRMNL webhook.",
+            "fields": {
+                "config_entry_id": {
+                    "name": "Config entry ID",
+                    "description": "Het ID van de TRMNL webhook configuratie om te updaten."
+                }
+            }
+        }
+    }
+}
