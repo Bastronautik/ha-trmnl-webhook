@@ -32,7 +32,7 @@ A custom Home Assistant integration to send entity data to your [TRMNL](https://
 2. Extract the `custom_components/trmnl_webhook folder` to your Home Assistant `config/custom_components/` directory
 3. Restart Home Assistant
 
-## Configuration
+## ⚙️ Configuration
 
 ### Via UI
 
@@ -60,7 +60,7 @@ Repeat the setup steps to configure multiple TRMNL webhooks. Each webhook can ha
 4. Adjust entities, update interval, or history points
 6. Click Submit
 
-## Usage
+## 📋 Usage
 
 ### Automatic Updates
 
@@ -156,7 +156,7 @@ Non-numeric entities (lights, switches, device trackers, etc.):
 - `current:` Current state ("on", "off", "home", etc.)
 - `last_changed`: Last state change timestamp
 
-## Troubleshooting
+## ℹ️ Troubleshooting
 
 ### Webhook Validation Failed
 
