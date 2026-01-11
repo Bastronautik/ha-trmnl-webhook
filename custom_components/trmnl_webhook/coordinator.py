@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from datetime import datetime, timedelta
 import logging
 from typing import Any
@@ -110,9 +111,6 @@ class TRMNLCoordinator(DataUpdateCoordinator):
                 "merge_variables": merge_variables
             }
             
-            _LOGGER.info("Payload size: ~%d bytes", len(str(payload)))
-            _LOGGER.debug("Sending payload to TRMNL: %s", payload)
-            
             # Send to TRMNL webhook
             await self._send_to_trmnl(payload)
             
@@ -193,6 +191,23 @@ class TRMNLCoordinator(DataUpdateCoordinator):
     async def _send_to_trmnl(self, payload: dict[str, Any]) -> None:
         """Send data to TRMNL webhook."""
         url = TRMNL_WEBHOOK_URL.format(webhook_id=self.webhook_id)
+        
+        # Check payload size (TRMNL has 2KB limit)
+        payload_json = json.dumps(payload)
+        payload_size = len(payload_json.encode('utf-8'))
+        
+        if payload_size > 2048:  # 2KB = 2048 bytes
+            _LOGGER.error(
+                "Payload too large: %d bytes (max 2048 bytes). "
+                "Reduce the number of entities or set history_points to 0 in the integration settings.",
+                payload_size
+            )
+            raise UpdateFailed(
+                f"Payload too large ({payload_size} bytes). "
+                f"Maximum is 2048 bytes. Reduce entities or history points."
+            )
+        
+        _LOGGER.info("Payload size: %d bytes (max 2048)", payload_size)
         
         max_retries = 3
         retry_delay = 1  # seconds
