@@ -10,5 +10,5 @@
     "iot_class": "cloud_push",
     "issue_tracker": "https://github.com/Bastronautik/ha-trmnl-webhook/issues",
     "requirements": [],
-    "version": "1.0.0"
+    "version": "0.1.0"
 }
